@@ -2,6 +2,7 @@ import pygame, os
 
 from objects.AIObject import AIObject
 from objects.BotObject import BotObject
+from objects.Object import Object
 import config
 
 # ----------------------------- Simulation class ----------------------------- #
@@ -10,18 +11,38 @@ class Simulation:
     def __init__(self, w = config.WIDTH, h = config.HEIGHT, caption = config.CAPTION):
         self.width, self.height = w, h
         self.caption = caption
+        self.objects = []
 
         # Init AI objects
         self.AI_objects = [ AIObject(pos) for pos in config.AI_START_POS ]
         self.AI_objects[0].is_leader = True # The first one is the leader
+        self.objects += self.AI_objects
 
         # Init the bot (victim)
         self.victim = BotObject(config.BOT_START_POS)
+        self.objects.append(self.victim)
+
+    def init(self):
+        # Init PyGame
+        pygame.init()
+        self.window = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption(self.caption)
+
+        self.game_running = True
+        self.boxes_printed = False
+
+        self.clock = pygame.time.Clock()
 
     def trigger_event(self, event):
         """ Trigger all pygame event """
         if event.type == pygame.QUIT:
-            self.game_running = False
+            self.exit() # Exiting
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.exit() # Exiting
+            elif event.key == pygame.K_SPACE:
+                self.boxes_printed = not self.boxes_printed # Debug collisions
     
     def draw_window(self):
         """ Draw all the window each tick """
@@ -33,16 +54,15 @@ class Simulation:
         
         # Draw the bot circle (victim)
         self.victim.draw(self.window)
+
+        # Draw collisions
+        if self.boxes_printed:
+            Object.draw_all_boxes(self.window, self.objects)
     
     def run_UI(self):
-        # Init PyGame
-        pygame.init()
-        self.window = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption(self.caption)
+        self.init()
 
         # Main loop
-        self.game_running = True
-        self.clock = pygame.time.Clock()
         while self.game_running:
             # Event loop
             for event in pygame.event.get():
@@ -57,6 +77,9 @@ class Simulation:
 
         # Exiting
         pygame.display.quit()
+
+    def exit(self):
+        self.game_running = False
     
     def force_quit(self):
         """ Exiting by killing the python process """

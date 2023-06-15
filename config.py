@@ -7,6 +7,7 @@ FPS = 60
 
 # Drawing params
 BACKGROUND_COLOR = (0, 0, 0)
+BOX_COLOR = (255, 255, 255)
 AI_COLOR = (255, 0, 0)
 BOT_COLOR = (0, 0, 255)
 ALPHA_DELTA = (2 * math.pi) / 3 # The angle between the head and foots

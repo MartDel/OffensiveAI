@@ -1,4 +1,4 @@
-import pygame, sys, math
+import sys, math
 sys.path.append("..")
 
 from .Object import Object
@@ -18,15 +18,16 @@ class MovingObject(Object):
         self.size = size
 
         # Determine the collision box
-        x, y = pos
-        box_width = config.TRIANGLE_LENGTH * size
-        x1, y1 = x + box_width, y + box_width
-        x2, y2 = x - box_width, y - box_width
+        box_width = (config.TRIANGLE_LENGTH + 3) * size
+        x1, y1 = box_width, box_width
+        x2, y2 = box_width, box_width
         box1 = (x1, y1, x2, y2)
 
         Object.__init__(self, pos, [box1])
 
     def draw(self, window):
+        import pygame
+
         def getPosByAlpha(alpha):
             """ Determine coord with the angle """
             x = self.size * config.TRIANGLE_LENGTH * math.cos(alpha) + self.x
