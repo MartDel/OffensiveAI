@@ -1,6 +1,7 @@
 import pygame, os
 
 from objects.AIObject import AIObject
+from objects.BotObject import BotObject
 import config
 
 # ----------------------------- Simulation class ----------------------------- #
@@ -13,6 +14,9 @@ class Simulation:
         # Init AI objects
         self.AI_objects = [ AIObject(pos) for pos in config.AI_START_POS ]
         self.AI_objects[0].is_leader = True # The first one is the leader
+
+        # Init the bot (victim)
+        self.victim = BotObject(config.BOT_START_POS)
 
     def trigger_event(self, event):
         """ Trigger all pygame event """
@@ -28,7 +32,7 @@ class Simulation:
             ai.draw(self.window)
         
         # Draw the bot circle (victim)
-        pygame.draw.circle(self.window, config.BOT_COLOR, config.BOT_START_POS, config.CIRCLE_RADIUS)
+        self.victim.draw(self.window)
     
     def run_UI(self):
         # Init PyGame
