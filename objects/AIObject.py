@@ -1,10 +1,10 @@
 import sys
 sys.path.append("..")
 
-from objects.Circle import Circle
+from objects.MovingObject import MovingObject
 import config
 
-class AIObject(Circle):
+class AIObject(MovingObject):
     def __init__(self, pos, is_leader = False):
         """
         Create an AI circle
@@ -12,4 +12,4 @@ class AIObject(Circle):
         is_leader : bool = False - If the current AI is the group leader
         """
         self.is_leader = is_leader
-        Circle.__init__(self, pos, config.CIRCLE_RADIUS, config.AI_COLOR)
+        MovingObject.__init__(self, pos, 0, config.AI_COLOR)

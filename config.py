@@ -1,3 +1,5 @@
+import math
+
 # Window params
 WIDTH, HEIGHT = 800, 600
 CAPTION = "Simulation"
@@ -7,7 +9,8 @@ FPS = 60
 BACKGROUND_COLOR = (0, 0, 0)
 AI_COLOR = (255, 0, 0)
 BOT_COLOR = (0, 0, 255)
-CIRCLE_RADIUS = 15
+ALPHA_DELTA = (2 * math.pi) / 3 # The angle between the head and foots
+TRIANGLE_LENGTH = 15
 
 # Start params
 AI_START_POS = [

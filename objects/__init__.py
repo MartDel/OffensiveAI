@@ -1,3 +1,4 @@
 from .Object import Object
-from .Circle import Circle
+from .MovingObject import MovingObject
 from .AIObject import AIObject
+from .BotObject import BotObject
