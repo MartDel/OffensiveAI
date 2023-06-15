@@ -79,7 +79,6 @@ class Object:
                 continue
             
             if obj.is_conflict(o):
-                print(f"==> conflict from {type(obj).__name__} with a {type(o).__name__} <==")
                 return True
         
         return False

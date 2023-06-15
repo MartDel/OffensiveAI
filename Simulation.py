@@ -41,6 +41,8 @@ class Simulation:
 
         self.clock = pygame.time.Clock()
 
+        self.victim.look_for((config.WIDTH, 0))
+
     def trigger_event(self, event):
         """ Trigger all pygame event """
         if event.type == pygame.QUIT:
