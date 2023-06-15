@@ -24,7 +24,7 @@ class Simulation:
     
     def frame_action(self):
         """ What to do at each frame """
-        self.victim.move_forward()
+        self.victim.move_forward(self.objects)
 
         # Win condition
         if self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:

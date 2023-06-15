@@ -27,11 +27,21 @@ class MovingObject(Object):
 
         Object.__init__(self, pos, [box1])
     
-    def move_forward(self):
+    def move_forward(self, objects):
         """ Move forward between 2 frames """
-        self.x += self.speed * math.cos(self.alpha)
-        self.y += self.speed * math.sin(self.alpha)
-        self.pos = (self.x, self.y)
+        # Determine the destination
+        x = self.speed * math.cos(self.alpha) + self.x
+        y = self.speed * math.sin(self.alpha) + self.y
+
+        # Check if it's valid (collisions and borders)
+        if x < 0 or y < 0 or x > config.WIDTH or y > config.HEIGHT:
+            return
+        if Object.is_any_conflict(self, objects):
+            return
+
+        # Set the nex position
+        self.pos = (x, y)
+        self.x, self.y = self.pos
 
     def draw(self, window):
         """ Draw the current object """
