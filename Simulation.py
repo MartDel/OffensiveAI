@@ -14,16 +14,20 @@ class Simulation:
         self.objects = []
 
         # Init AI objects
-        self.AI_objects = [ AIObject(pos) for pos in config.AI_START_POS ]
+        self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA) for pos in config.AI_START_POS ]
         self.AI_objects[0].is_leader = True # The first one is the leader
         self.objects += self.AI_objects
 
         # Init the bot (victim)
-        self.victim = BotObject(config.BOT_START_POS)
+        self.victim = BotObject(config.BOT_START_POS, config.AI_START_ALPHA)
         self.objects.append(self.victim)
+    
+    def frame_action(self):
+        """ What to do at each frame """
+        self.victim.move_forward()
 
     def init(self):
-        # Init PyGame
+        """ Init PyGame """
         pygame.init()
         self.window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption(self.caption)
@@ -67,6 +71,8 @@ class Simulation:
             # Event loop
             for event in pygame.event.get():
                 self.trigger_event(event)
+
+            self.frame_action()
 
             # Draw the window content
             self.draw_window()

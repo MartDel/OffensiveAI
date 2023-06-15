@@ -19,6 +19,7 @@ class Object:
         self.boxes = boxes
 
     def get_final_boxes(self):
+        """ Determine the pygame boxes """
         return [
             (
                 self.x - box[0],
@@ -29,12 +30,14 @@ class Object:
         ]
 
     def draw_boxes(self, window):
+        """ Draw all current object boxes """
         import pygame
 
         for box in self.get_final_boxes():
             pygame.draw.rect(window, config.BOX_COLOR, box, 2)
     
     @staticmethod
-    def draw_all_boxes(window, objects):        
+    def draw_all_boxes(window, objects):   
+        """ Draw all given objects boxes """     
         for obj in objects:
             obj.draw_boxes(window)

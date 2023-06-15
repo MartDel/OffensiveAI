@@ -23,3 +23,7 @@ AI_START_POS = [
     (50, 100)
 ]
 BOT_START_POS = (50, HEIGHT - 50)
+AI_START_ALPHA = 0 # Rad
+BOT_START_ALPHA = 0 # Rad
+AI_SPEED = 2 # Pixel per frame
+BOT_SPEED = 1 # Pixel per frame
