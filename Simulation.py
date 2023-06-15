@@ -19,12 +19,16 @@ class Simulation:
         self.objects += self.AI_objects
 
         # Init the bot (victim)
-        self.victim = BotObject(config.BOT_START_POS, config.AI_START_ALPHA)
+        self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA)
         self.objects.append(self.victim)
     
     def frame_action(self):
         """ What to do at each frame """
         self.victim.move_forward()
+
+        # Win condition
+        if self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:
+            self.exit()
 
     def init(self):
         """ Init PyGame """
@@ -52,6 +56,9 @@ class Simulation:
         """ Draw all the window each tick """
         self.window.fill(config.BACKGROUND_COLOR) # Window background
 
+        # Win rect
+        pygame.draw.rect(self.window, (0, 255, 0), (config.WIDTH - config.WIN_RECT_WIDTH, 0, config.WIN_RECT_WIDTH, config.WIN_RECT_HEIGHT), 2)
+
         # Draw AI circles
         for ai in self.AI_objects:
             ai.draw(self.window)
@@ -64,6 +71,7 @@ class Simulation:
             Object.draw_all_boxes(self.window, self.objects)
     
     def run_UI(self):
+        """ Run the simu with UI """
         self.init()
 
         # Main loop
@@ -72,6 +80,7 @@ class Simulation:
             for event in pygame.event.get():
                 self.trigger_event(event)
 
+            # Do some calculs, movements
             self.frame_action()
 
             # Draw the window content
@@ -85,6 +94,7 @@ class Simulation:
         pygame.display.quit()
 
     def exit(self):
+        """ Tell the simulation to stop """
         self.game_running = False
     
     def force_quit(self):
