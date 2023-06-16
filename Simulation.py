@@ -24,6 +24,7 @@ class Simulation:
     
     def frame_action(self):
         """ What to do at each frame """
+        # if self.first_frame:
         self.victim.move_forward(self.objects)
 
         # Win condition
@@ -38,10 +39,15 @@ class Simulation:
 
         self.game_running = True
         self.boxes_printed = False
+        self.rays_printed = False
+
+        self.first_frame = True
 
         self.clock = pygame.time.Clock()
 
-        self.victim.look_for((config.WIDTH, 0))
+        # self.victim.look_for((0, config.HEIGHT))
+        self.victim.look_for(self.AI_objects[0].pos)
+        # self.victim.look_for((config.WIDTH, 0))
 
     def trigger_event(self, event):
         """ Trigger all pygame event """
@@ -53,13 +59,14 @@ class Simulation:
                 self.exit() # Exiting
             elif event.key == pygame.K_SPACE:
                 self.boxes_printed = not self.boxes_printed # Debug collisions
+                self.rays_printed = not self.rays_printed # Debug collisions
     
     def draw_window(self):
         """ Draw all the window each tick """
         self.window.fill(config.BACKGROUND_COLOR) # Window background
 
         # Win rect
-        pygame.draw.rect(self.window, (0, 255, 0), (config.WIDTH - config.WIN_RECT_WIDTH, 0, config.WIN_RECT_WIDTH, config.WIN_RECT_HEIGHT), 2)
+        pygame.draw.rect(self.window, config.WIN_RECT_COLOR, (config.WIDTH - config.WIN_RECT_WIDTH, 0, config.WIN_RECT_WIDTH, config.WIN_RECT_HEIGHT), 2)
 
         # Draw AI circles
         for ai in self.AI_objects:
@@ -71,6 +78,10 @@ class Simulation:
         # Draw collisions
         if self.boxes_printed:
             Object.draw_all_boxes(self.window, self.objects)
+
+        # Draw rays
+        if self.rays_printed:
+            self.victim.draw_rays(self.window)
     
     def run_UI(self):
         """ Run the simu with UI """
@@ -91,6 +102,8 @@ class Simulation:
             # Update diplay
             pygame.display.update()
             self.clock.tick(config.FPS) # How many refresh per second
+
+            self.first_frame = False
 
         # Exiting
         pygame.display.quit()

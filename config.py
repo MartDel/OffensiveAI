@@ -12,6 +12,10 @@ AI_COLOR = (255, 0, 0)
 BOT_COLOR = (0, 0, 255)
 ALPHA_DELTA = (2 * pi) / 3 # The angle between the head and foots
 TRIANGLE_LENGTH = 15
+WIN_RECT_COLOR = (0, 255, 0)
+RAY_COLOR = (0, 255, 0)
+RAY_WIDTH = 3
+RAY_BOX_COLOR = (255, 0, 0)
 
 # Start params
 AI_START_POS = [
@@ -27,7 +31,15 @@ AI_START_ALPHA = pi/4 # Rad
 BOT_START_ALPHA = -pi / 5  # Rad
 AI_SPEED = 1.5 # Pixel per frame
 BOT_SPEED = 1 # Pixel per frame
+BOT_RAY_DISTANCE = 100
 
 # Win condition
 WIN_RECT_WIDTH = 100
 WIN_RECT_HEIGHT = 100
+
+# Raycaster
+RAY_START_LENGTH = 1
+RAY_INC = 1
+RAY_BOX_SIZE = 5
+RAYCASTER_RANGE = pi / 4 # Rad
+RAYCASTER_STEP = pi / 15 # Rad

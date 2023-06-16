@@ -1,7 +1,9 @@
 import sys, math
 sys.path.append("..")
 
-from .Object import Object
+from objects.Object import Object
+from utils.Utils import Utils
+from utils.Ray import Ray
 import config
 
 class MovingObject(Object):
@@ -18,6 +20,7 @@ class MovingObject(Object):
         self.speed = speed
         self.color = color
         self.size = size
+        self.rays = []
 
         # Determine the collision box
         box_width = (config.TRIANGLE_LENGTH + 3) * size
@@ -26,7 +29,7 @@ class MovingObject(Object):
         box1 = (x1, y1, x2, y2)
 
         Object.__init__(self, pos, [box1])
-    
+            
     def move_forward(self, objects):
         """ Move forward between 2 frames """
         # Determine the destination
@@ -34,14 +37,26 @@ class MovingObject(Object):
         y = self.speed * math.sin(self.alpha) + self.y
 
         # Check if it's valid (collisions and borders)
-        if x < 0 or y < 0 or x > config.WIDTH or y > config.HEIGHT:
+        if not Utils.check_border((x, y)):
             return
-        if Object.is_any_conflict(self, objects):
+        if Object.is_any_conflict(self, objects) != None:
             return
 
         # Set the nex position
         self.pos = (x, y)
         self.x, self.y = self.pos
+
+        # Update the raycaster
+        self.rays = []
+        a = self.alpha - config.RAYCASTER_RANGE
+        stop = self.alpha + config.RAYCASTER_RANGE
+        step = config.RAYCASTER_STEP
+        while a <= stop:
+            self.rays.append(Ray(self.pos, a, config.BOT_RAY_DISTANCE))
+            a += step
+        
+        # Get objects that the object is able to see
+        self.targets = [ ray.cast(self, objects) for ray in self.rays ]
 
     def draw(self, window):
         """ Draw the current object """
@@ -60,3 +75,8 @@ class MovingObject(Object):
             getPosByAlpha(self.alpha - config.ALPHA_DELTA)
         ]
         pygame.draw.polygon(window, self.color, points)
+    
+    def draw_rays(self, window):
+        """ Draw rays of raycaster """
+        for ray in self.rays:
+            ray.draw(window)
