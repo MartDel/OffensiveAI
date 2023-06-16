@@ -16,13 +16,11 @@ WIN_RECT_COLOR = (0, 255, 0)
 RAY_COLOR = (0, 255, 0)
 RAY_WIDTH = 3
 RAY_BOX_COLOR = (255, 0, 0)
+WALL_COLOR = (160, 160, 160)
 
 # Start params
 AI_START_POS = [
-    # Leader
     (100, 100),
-
-    # Soldiers
     (100, 50), 
     (50, 100)
 ]
@@ -39,7 +37,7 @@ WIN_RECT_HEIGHT = 100
 
 # Raycaster
 RAY_START_LENGTH = 1
-RAY_INC = 1
+RAY_INC = 1 # Raycaster accuracy
 RAY_BOX_SIZE = 5
 RAYCASTER_RANGE = pi / 4 # Rad
 RAYCASTER_STEP = pi / 15 # Rad

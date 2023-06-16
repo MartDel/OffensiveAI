@@ -47,8 +47,8 @@ class Object:
             (
                 self.x - box[0],
                 self.y - box[1],
-                box[2] * 2,
-                box[3] * 2
+                box[0] + box[2],
+                box[1] + box[3]
             ) for box in self.boxes
         ]
 

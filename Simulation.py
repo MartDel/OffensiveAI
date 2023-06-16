@@ -2,6 +2,8 @@ import pygame, os
 
 from objects.AIObject import AIObject
 from objects.BotObject import BotObject
+from objects.MovingObject import MovingObject
+from objects.Wall import Wall
 from objects.Object import Object
 import config
 
@@ -13,9 +15,14 @@ class Simulation:
         self.caption = caption
         self.objects = []
 
+        # Init borders
+        self.objects.append(Wall((0, 0), 10, config.HEIGHT))
+        self.objects.append(Wall((0, 0), config.WIDTH, 10))
+        self.objects.append(Wall((config.WIDTH - 10, 0), 10, config.HEIGHT))
+        self.objects.append(Wall((0, config.HEIGHT - 10), config.WIDTH, 10))
+
         # Init AI objects
         self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA) for pos in config.AI_START_POS ]
-        self.AI_objects[0].is_leader = True # The first one is the leader
         self.objects += self.AI_objects
 
         # Init the bot (victim)
@@ -38,8 +45,8 @@ class Simulation:
         pygame.display.set_caption(self.caption)
 
         self.game_running = True
-        self.boxes_printed = False
-        self.rays_printed = False
+        self.boxes_printed = True
+        self.rays_printed = True
 
         self.first_frame = True
 
@@ -68,12 +75,9 @@ class Simulation:
         # Win rect
         pygame.draw.rect(self.window, config.WIN_RECT_COLOR, (config.WIDTH - config.WIN_RECT_WIDTH, 0, config.WIN_RECT_WIDTH, config.WIN_RECT_HEIGHT), 2)
 
-        # Draw AI circles
-        for ai in self.AI_objects:
-            ai.draw(self.window)
-        
-        # Draw the bot circle (victim)
-        self.victim.draw(self.window)
+        # Draw objects
+        for obj in self.objects:
+            obj.draw(self.window)
 
         # Draw collisions
         if self.boxes_printed:
@@ -81,7 +85,10 @@ class Simulation:
 
         # Draw rays
         if self.rays_printed:
-            self.victim.draw_rays(self.window)
+            for obj in self.objects:
+                if not isinstance(obj, MovingObject):
+                    continue
+                obj.draw_rays(self.window)
     
     def run_UI(self):
         """ Run the simu with UI """

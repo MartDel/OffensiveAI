@@ -37,8 +37,6 @@ class MovingObject(Object):
         y = self.speed * math.sin(self.alpha) + self.y
 
         # Check if it's valid (collisions and borders)
-        if not Utils.check_border((x, y)):
-            return
         if Object.is_any_conflict(self, objects) != None:
             return
 
