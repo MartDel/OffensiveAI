@@ -29,7 +29,7 @@ AI_START_ALPHA = pi/4 # Rad
 BOT_START_ALPHA = -pi / 5  # Rad
 AI_SPEED = 1.5 # Pixel per frame
 BOT_SPEED = 1 # Pixel per frame
-BOT_RAY_DISTANCE = 100
+
 
 # Win condition
 WIN_RECT_WIDTH = 100
@@ -39,5 +39,12 @@ WIN_RECT_HEIGHT = 100
 RAY_START_LENGTH = 1
 RAY_INC = 1 # Raycaster accuracy
 RAY_BOX_SIZE = 5
+RAY_DISTANCE = 100
 RAYCASTER_RANGE = pi / 4 # Rad
 RAYCASTER_STEP = pi / 15 # Rad
+MAX_LOAD_RANGE = RAY_DISTANCE + 20
+
+# Walls
+WALL_WIDTH = 40
+WALL_HEIGHT = 20
+WALLS_COORD = [(100, 425), (100, 350), (100, 275), (100, 200), (175, 500), (175, 350), (175, 275), (175, 200), (175, 125), (250, 500), (250, 275), (250, 200), (250, 125), (250, 50), (325, 500), (325, 425), (325, 200), (325, 125), (325, 50), (400, 500), (400, 425), (400, 350), (400, 125), (400, 50), (475, 500), (475, 425), (475, 350), (475, 275), (475, 50), (550, 500), (550, 425), (550, 350), (550, 275)]

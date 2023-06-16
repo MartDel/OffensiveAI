@@ -20,6 +20,11 @@ class Simulation:
         self.objects.append(Wall((0, 0), config.WIDTH, 10))
         self.objects.append(Wall((config.WIDTH - 10, 0), 10, config.HEIGHT))
         self.objects.append(Wall((0, config.HEIGHT - 10), config.WIDTH, 10))
+        for obj_idx in range(4):
+            self.objects[obj_idx].is_border = True
+
+        # Add obstacles
+        self.objects += [ Wall(pos, config.WALL_WIDTH, config.WALL_HEIGHT) for pos in config.WALLS_COORD ]
 
         # Init AI objects
         self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA) for pos in config.AI_START_POS ]
@@ -45,15 +50,15 @@ class Simulation:
         pygame.display.set_caption(self.caption)
 
         self.game_running = True
-        self.boxes_printed = True
-        self.rays_printed = True
+        self.boxes_printed = False
+        self.rays_printed = False
 
         self.first_frame = True
 
         self.clock = pygame.time.Clock()
 
-        # self.victim.look_for((0, config.HEIGHT))
-        self.victim.look_for(self.AI_objects[0].pos)
+        self.victim.look_for((config.WIDTH, config.HEIGHT))
+        # self.victim.look_for(self.AI_objects[0].pos)
         # self.victim.look_for((config.WIDTH, 0))
 
     def trigger_event(self, event):

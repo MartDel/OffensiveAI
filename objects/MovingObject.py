@@ -37,12 +37,15 @@ class MovingObject(Object):
         y = self.speed * math.sin(self.alpha) + self.y
 
         # Check if it's valid (collisions and borders)
+        objects = list(filter(lambda obj: obj.is_border or ((obj.x - self.x) ** 2) + ((obj.y - self.y) ** 2) <= config.MAX_LOAD_RANGE ** 2, objects))
         if Object.is_any_conflict(self, objects) != None:
             return
 
-        # Set the nex position
+        # Set the new position
         self.pos = (x, y)
         self.x, self.y = self.pos
+        self.ui_boxes = self.get_final_boxes()
+        self.coord_boxes = self.get_coord_boxes()
 
         # Update the raycaster
         self.rays = []
@@ -50,7 +53,7 @@ class MovingObject(Object):
         stop = self.alpha + config.RAYCASTER_RANGE
         step = config.RAYCASTER_STEP
         while a <= stop:
-            self.rays.append(Ray(self.pos, a, config.BOT_RAY_DISTANCE))
+            self.rays.append(Ray(self.pos, a, config.RAY_DISTANCE))
             a += step
         
         # Get objects that the object is able to see
@@ -73,8 +76,12 @@ class MovingObject(Object):
             getPosByAlpha(self.alpha - config.ALPHA_DELTA)
         ]
         pygame.draw.polygon(window, self.color, points)
-    
+            
     def draw_rays(self, window):
         """ Draw rays of raycaster """
+        # import pygame
+
         for ray in self.rays:
             ray.draw(window)
+        
+        # pygame.draw.circle(window, (255, 0, 0), self.pos, config.MAX_LOAD_RANGE, 2)

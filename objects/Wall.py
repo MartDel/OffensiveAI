@@ -27,5 +27,5 @@ class Wall(Object):
         """ Draw the wall to the screen """
         import pygame
         
-        for rect in self.get_final_boxes():
+        for rect in self.ui_boxes:
             pygame.draw.rect(window, self.color, rect, 0)

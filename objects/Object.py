@@ -18,6 +18,11 @@ class Object:
         self.x, self.y = pos
         self.boxes = boxes
 
+        self.is_border = False
+
+        self.ui_boxes = self.get_final_boxes()
+        self.coord_boxes = self.get_coord_boxes()
+
         self.linked_boxes = [] # Objects to ignore
     
     def is_conflict(self, object):
@@ -25,10 +30,10 @@ class Object:
         if object in self.linked_boxes:
             return False
 
-        for my_box in self.get_coord_boxes():
+        for my_box in self.coord_boxes:
             x1_min, y1_min, x1_max, y1_max = my_box
 
-            for obj_box in object.get_coord_boxes():
+            for obj_box in object.coord_boxes:
                 x2_min, y2_min, x2_max, y2_max = obj_box
 
                 # Check x
@@ -67,7 +72,7 @@ class Object:
         """ Draw all current object boxes """
         import pygame
 
-        for box in self.get_final_boxes():
+        for box in self.ui_boxes:
             pygame.draw.rect(window, color, box, 2 if not fill else 0)
     
     @staticmethod
