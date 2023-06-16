@@ -37,7 +37,7 @@ class MovingObject(Object):
         y = self.speed * math.sin(self.alpha) + self.y
 
         # Check if it's valid (collisions and borders)
-        objects = list(filter(lambda obj: obj.is_border or ((obj.x - self.x) ** 2) + ((obj.y - self.y) ** 2) <= config.MAX_LOAD_RANGE ** 2, objects))
+        objects = self.filter_objects(objects)
         if Object.is_any_conflict(self, objects) != None:
             return
 
@@ -48,6 +48,32 @@ class MovingObject(Object):
         self.coord_boxes = self.get_coord_boxes()
 
         # Update the raycaster
+        self.raycast(objects)
+    
+    def look_for(self, target, objects):
+        """ Move to the given position """
+        x_delta = abs(float(self.x - target[0]))
+        y_delta = abs(float(self.y - target[1]))
+
+        if (target[0] < self.x and target[1] <= self.y):
+            # pi <= alpha < 3pi/2
+            self.alpha = math.atan(y_delta / x_delta) + math.pi
+        elif (target[0] >= self.x and target[1] < self.y):
+            # 3pi/2 <= alpha < 2pi
+            self.alpha = math.atan(x_delta / y_delta) + ((3 * math.pi) / 2)
+        elif (target[0] > self.x and target[1] >= self.y):
+            # 0 <= alpha < pi/2
+            self.alpha = math.atan(y_delta / x_delta)
+        elif (target[0] <= self.x and target[1] > self.y):
+            # pi/2 <= alpha < pi
+            self.alpha = math.atan(x_delta / y_delta) + (math.pi / 2)
+        
+        # Update the raycaster
+        objects = self.filter_objects(objects)
+        self.raycast(objects)
+    
+    def raycast(self, objects):
+        """ Update the raycaster """
         self.rays = []
         a = self.alpha - config.RAYCASTER_RANGE
         stop = self.alpha + config.RAYCASTER_RANGE
@@ -58,6 +84,11 @@ class MovingObject(Object):
         
         # Get objects that the object is able to see
         self.targets = [ ray.cast(self, objects) for ray in self.rays ]
+
+    def filter_objects(self, objects):
+        """ Work with less objects """
+        objs = filter(lambda obj: obj.is_border or ((obj.x - self.x) ** 2) + ((obj.y - self.y) ** 2) <= config.MAX_LOAD_RANGE ** 2, objects)
+        return list(objs)
 
     def draw(self, window):
         """ Draw the current object """

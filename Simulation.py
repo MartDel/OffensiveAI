@@ -37,7 +37,12 @@ class Simulation:
     def frame_action(self):
         """ What to do at each frame """
         # if self.first_frame:
-        self.victim.move_forward(self.objects)
+
+        # Move all objects
+        for obj in filter(lambda obj: isinstance(obj, MovingObject), self.objects):
+            if isinstance(obj, AIObject):
+                obj.look_for(self.victim.pos, self.objects)
+            obj.move_forward(self.objects)
 
         # Win condition
         if self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:
@@ -57,9 +62,9 @@ class Simulation:
 
         self.clock = pygame.time.Clock()
 
-        self.victim.look_for((config.WIDTH, config.HEIGHT))
+        # self.victim.look_for((config.WIDTH, config.HEIGHT))
         # self.victim.look_for(self.AI_objects[0].pos)
-        # self.victim.look_for((config.WIDTH, 0))
+        self.victim.look_for((config.WIDTH, 0), self.objects)
 
     def trigger_event(self, event):
         """ Trigger all pygame event """

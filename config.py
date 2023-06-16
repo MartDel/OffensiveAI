@@ -21,8 +21,8 @@ WALL_COLOR = (160, 160, 160)
 # Start params
 AI_START_POS = [
     (100, 100),
-    (100, 50), 
-    (50, 100)
+    # (100, 50), 
+    # (50, 100)
 ]
 BOT_START_POS = (50, HEIGHT - 50)
 AI_START_ALPHA = pi/4 # Rad
