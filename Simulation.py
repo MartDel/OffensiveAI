@@ -31,18 +31,21 @@ class Simulation:
         self.objects += self.AI_objects
 
         # Init the bot (victim)
-        self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA)
+        # self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA)
+        self.victim = BotObject((400, 300), config.BOT_START_ALPHA)
         self.objects.append(self.victim)
     
     def frame_action(self):
         """ What to do at each frame """
-        # if self.first_frame:
+        if self.first_frame:
+            pass
 
         # Move all objects
         for obj in filter(lambda obj: isinstance(obj, MovingObject), self.objects):
-            if isinstance(obj, AIObject):
-                obj.look_for(self.victim.pos, self.objects)
-            obj.move_forward(self.objects)
+            if isinstance(obj, AIObject): 
+                new_destination = obj.pathfinder(self.victim, self.objects, self)
+                obj.look_for(new_destination, self.objects)
+            obj.move_forward(self.objects, raycast=isinstance(obj, BotObject))
 
         # Win condition
         if self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:
@@ -57,7 +60,8 @@ class Simulation:
         self.game_running = True
         self.boxes_printed = False
         self.rays_printed = False
-
+        self.pause = False
+    
         self.first_frame = True
 
         self.clock = pygame.time.Clock()
@@ -77,6 +81,8 @@ class Simulation:
             elif event.key == pygame.K_SPACE:
                 self.boxes_printed = not self.boxes_printed # Debug collisions
                 self.rays_printed = not self.rays_printed # Debug collisions
+            elif event.key == pygame.K_p:
+                self.pause = not self.pause # Make pause or resume
     
     def draw_window(self):
         """ Draw all the window each tick """
@@ -99,6 +105,7 @@ class Simulation:
                 if not isinstance(obj, MovingObject):
                     continue
                 obj.draw_rays(self.window)
+        
     
     def run_UI(self):
         """ Run the simu with UI """
@@ -110,11 +117,12 @@ class Simulation:
             for event in pygame.event.get():
                 self.trigger_event(event)
 
-            # Do some calculs, movements
-            self.frame_action()
-
             # Draw the window content
             self.draw_window()
+
+            # Do some calculs, movements
+            if not self.pause:
+                self.frame_action()
         
             # Update diplay
             pygame.display.update()

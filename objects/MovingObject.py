@@ -30,7 +30,7 @@ class MovingObject(Object):
 
         Object.__init__(self, pos, [box1])
             
-    def move_forward(self, objects):
+    def move_forward(self, objects, raycast = True):
         """ Move forward between 2 frames """
         # Determine the destination
         x = self.speed * math.cos(self.alpha) + self.x
@@ -48,46 +48,33 @@ class MovingObject(Object):
         self.coord_boxes = self.get_coord_boxes()
 
         # Update the raycaster
-        self.raycast(objects)
+        if raycast:
+            self.raycast(objects)
     
-    def look_for(self, target, objects):
+    def look_for(self, target, objects, raycast = False):
         """ Move to the given position """
-        x_delta = abs(float(self.x - target[0]))
-        y_delta = abs(float(self.y - target[1]))
-
-        if (target[0] < self.x and target[1] <= self.y):
-            # pi <= alpha < 3pi/2
-            self.alpha = math.atan(y_delta / x_delta) + math.pi
-        elif (target[0] >= self.x and target[1] < self.y):
-            # 3pi/2 <= alpha < 2pi
-            self.alpha = math.atan(x_delta / y_delta) + ((3 * math.pi) / 2)
-        elif (target[0] > self.x and target[1] >= self.y):
-            # 0 <= alpha < pi/2
-            self.alpha = math.atan(y_delta / x_delta)
-        elif (target[0] <= self.x and target[1] > self.y):
-            # pi/2 <= alpha < pi
-            self.alpha = math.atan(x_delta / y_delta) + (math.pi / 2)
+        self.alpha = Utils.get_alpha_to(target, self.pos)
         
         # Update the raycaster
-        objects = self.filter_objects(objects)
-        self.raycast(objects)
+        if raycast:
+            self.raycast(objects)
     
-    def raycast(self, objects):
+    def raycast(self, objects, range = config.RAYCASTER_RANGE, step = config.RAYCASTER_STEP, distance = config.RAY_DISTANCE):
         """ Update the raycaster """
         self.rays = []
-        a = self.alpha - config.RAYCASTER_RANGE
-        stop = self.alpha + config.RAYCASTER_RANGE
-        step = config.RAYCASTER_STEP
+        a = self.alpha - range
+        stop = self.alpha + range
         while a <= stop:
-            self.rays.append(Ray(self.pos, a, config.RAY_DISTANCE))
+            self.rays.append(Ray(self.pos, a, distance))
             a += step
         
         # Get objects that the object is able to see
-        self.targets = [ ray.cast(self, objects) for ray in self.rays ]
+        self.targets = [ ray.cast(self, objects, self.filter_objects) for ray in self.rays ]
 
-    def filter_objects(self, objects):
+    def filter_objects(self, objects, pos=None):
         """ Work with less objects """
-        objs = filter(lambda obj: obj.is_border or ((obj.x - self.x) ** 2) + ((obj.y - self.y) ** 2) <= config.MAX_LOAD_RANGE ** 2, objects)
+        pos = pos if pos is not None else self.pos
+        objs = filter(lambda obj: obj.is_border or ((obj.x - pos[0]) ** 2) + ((obj.y - pos[1]) ** 2) <= config.MAX_LOAD_RANGE ** 2, objects)
         return list(objs)
 
     def draw(self, window):

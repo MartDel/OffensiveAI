@@ -17,22 +17,22 @@ class Ray:
         self.max_distance = max_distance
         self.hitbox = None
     
-    def cast(self, origin, all_objects):
+    def cast(self, origin, all_objects, filter):
         """ Send the ray from the 'origin' object and returns the hit box """
-        hit = None
-        d = config.RAY_START_LENGTH
-        while d <= self.max_distance and hit == None:
+        self.hit = None
+        self.length = config.RAY_START_LENGTH
+        while self.length <= self.max_distance and self.hit == None:
             # Determine end point
-            self.end_point = d * math.cos(self.alpha) + self.start_point[0], d * math.sin(self.alpha) + self.start_point[1]
+            self.end_point = self.length * math.cos(self.alpha) + self.start_point[0], self.length * math.sin(self.alpha) + self.start_point[1]
 
             # Check the collision
             self.create_box(origin)
-            hit = Object.is_any_conflict(self.hitbox, all_objects)
+            self.hit = Object.is_any_conflict(self.hitbox, filter(all_objects, self.end_point))
 
             # Increase the ray length
-            d += config.RAY_INC
+            self.length += config.RAY_INC
 
-        return hit
+        return self.hit
 
     def create_box(self, origin):
         """ Generate the hitbox of the ray end point """
