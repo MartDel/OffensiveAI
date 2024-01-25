@@ -10,14 +10,15 @@ from utils.Ray import Ray
 import config
 
 class AIObject(MovingObject):
-    def __init__(self, pos, alpha):
+    def __init__(self, pos, alpha, is_static = False):
         """
         Create an AI circle
         pos : (x, y) - The start window position (x and y are floats)
         alpha : float - The start angle
         is_leader : bool = False - If the current AI is the group leader
+        is_static : bool = False - If the AI should stay static (no movements)
         """
-        MovingObject.__init__(self, pos, alpha, config.AI_SPEED, config.AI_COLOR)
+        MovingObject.__init__(self, pos, alpha, config.AI_SPEED, config.AI_COLOR, is_static=is_static)
     
     def pathfinder(self, dest_obj, objects, simu):
         """ Try to reach the destination by dodging the wall """
@@ -27,7 +28,6 @@ class AIObject(MovingObject):
         ray_filter = lambda objs, pos : list(filter(lambda obj: not isinstance(obj, BotObject), self.filter_objects(objs, pos)))
         ray = Ray(self.pos, ray_alpha, ray_distance)
         cast_result = ray.cast(self, objects, ray_filter)
-        ray.draw(simu.window)
         self.raycast(objects, range = pi, step = pi / 4, distance = 20) # Check around not to collide
         if cast_result is None and all(target is None for target in self.targets):
             return dest_obj.pos
@@ -77,7 +77,7 @@ class AIObject(MovingObject):
         while i > 0:
             layers[i].sort(key=lambda obj: Utils.distance_between(obj.pos, next_point))
             next_point = layers[i][0].pos
-            pygame.draw.circle(simu.window, (255, 0, 0), next_point, 2)
+            # pygame.draw.circle(simu.window, (255, 0, 0), next_point, 2)
             i -= 1
         
         return next_point

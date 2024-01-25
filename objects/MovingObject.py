@@ -7,19 +7,21 @@ from utils.Ray import Ray
 import config
 
 class MovingObject(Object):
-    def __init__(self, pos, alpha, speed, color, size = 1):
+    def __init__(self, pos, alpha, speed, color, size = 1, is_static = False):
         """
         Create a moving object (triangle)
         pos : (x, y) - The start window position (x and y are floats)
         alpha : float - The start angle
         speed : float - The object speed
         color : (r, g, b) - The shape color (r, g and b are floats)
-        size : float - The shape size
+        size : float = 1 - The shape size
+        is_static : bool = False - If the AI should stay static (no movements)
         """
         self.alpha = alpha
         self.speed = speed
         self.color = color
         self.size = size
+        self.is_static = is_static
         self.rays = []
 
         # Determine the collision box
@@ -32,6 +34,9 @@ class MovingObject(Object):
             
     def move_forward(self, objects, raycast = True):
         """ Move forward between 2 frames """
+        if self.is_static:
+            return
+
         # Determine the destination
         x = self.speed * math.cos(self.alpha) + self.x
         y = self.speed * math.sin(self.alpha) + self.y

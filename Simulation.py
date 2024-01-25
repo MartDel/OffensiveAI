@@ -10,10 +10,18 @@ import config
 # ----------------------------- Simulation class ----------------------------- #
 
 class Simulation:
-    def __init__(self, w = config.WIDTH, h = config.HEIGHT, caption = config.CAPTION):
+    def __init__(self, w = config.WIDTH, h = config.HEIGHT, caption = config.CAPTION, is_static = False):
+        """
+        Create a simulation with a 'player' (BotObject) and 'ennemies' (AIObject)
+        w : int - The window width
+        h : int - The window height
+        caption : str - The window title
+        is_static : bool - If the simulation should stay static (no movements from bot or AIs)
+        """
         self.width, self.height = w, h
         self.caption = caption
         self.objects = []
+        self.is_static = is_static
 
         # Init borders
         self.objects.append(Wall((0, 0), 10, config.HEIGHT))
@@ -27,15 +35,13 @@ class Simulation:
         self.objects += [ Wall(pos, config.WALL_WIDTH, config.WALL_HEIGHT) for pos in config.WALLS_COORD ]
 
         # Init AI objects
-        self.AI_objects = []
-        # self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA) for pos in config.AI_START_POS ]
-        # self.objects += self.AI_objects
+        self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA, is_static=self.is_static) for pos in config.AI_START_POS ]
+        self.objects += self.AI_objects
 
         # Init the bot (victim)
-        self.victim = None
-        # self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA)
+        self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA, is_static=self.is_static)
         # self.victim = BotObject((400, 300), config.BOT_START_ALPHA)
-        # self.objects.append(self.victim)
+        self.objects.append(self.victim)
     
     def frame_action(self):
         """ What to do at each frame """
@@ -50,7 +56,7 @@ class Simulation:
             obj.move_forward(self.objects, raycast=isinstance(obj, BotObject))
 
         # Win condition
-        if self.victim and self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:
+        if self.victim.x >= config.WIDTH - config.WIN_RECT_WIDTH and self.victim.y <= config.WIN_RECT_HEIGHT:
             self.exit()
 
     def init(self):
@@ -62,16 +68,13 @@ class Simulation:
         self.game_running = True
         self.boxes_printed = False
         self.rays_printed = False
-        self.pause = False
+        self.pause = self.is_static
     
         self.first_frame = True
 
         self.clock = pygame.time.Clock()
 
-        # self.victim.look_for((config.WIDTH, config.HEIGHT))
-        # self.victim.look_for(self.AI_objects[0].pos)
-        if self.victim:
-            self.victim.look_for((config.WIDTH, 0), self.objects)
+        self.victim.look_for((config.WIDTH, 0), self.objects)
 
     def trigger_event(self, event):
         """ Trigger all pygame event """
@@ -147,6 +150,6 @@ class Simulation:
 # ---------------------------------- Testing --------------------------------- #
 
 if __name__ == "__main__":
-    simu = Simulation()
+    simu = Simulation(is_static=True)
     simu.run_UI()
     simu.force_quit()
