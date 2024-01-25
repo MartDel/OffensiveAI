@@ -30,18 +30,6 @@ class Simulation:
         self.objects.append(Wall((0, config.HEIGHT - 10), config.WIDTH, 10))
         for obj_idx in range(4):
             self.objects[obj_idx].is_border = True
-
-        # Add obstacles
-        self.objects += [ Wall(pos, config.WALL_WIDTH, config.WALL_HEIGHT) for pos in config.WALLS_COORD ]
-
-        # Init AI objects
-        self.AI_objects = [ AIObject(pos, config.AI_START_ALPHA, is_static=self.is_static) for pos in config.AI_START_POS ]
-        self.objects += self.AI_objects
-
-        # Init the bot (victim)
-        self.victim = BotObject(config.BOT_START_POS, config.BOT_START_ALPHA, is_static=self.is_static)
-        # self.victim = BotObject((400, 300), config.BOT_START_ALPHA)
-        self.objects.append(self.victim)
     
     def frame_action(self):
         """ What to do at each frame """
@@ -147,9 +135,38 @@ class Simulation:
         """ Exiting by killing the python process """
         os.kill(os.getpid(), 9)
 
-# ---------------------------------- Testing --------------------------------- #
+    def set_AIs(self, ais):
+        """
+        Set level AIs
+        ais : list(AIObject) - A list of AIObjects to add to the Simulation 
+        """
+        self.AI_objects = ais
+        self.objects += self.AI_objects
+    
+    def set_bot(self, bot):
+        """
+        Set the level bot (victim/player)
+        bot : BotObject - A BotObject to add to the Simulation 
+        """
+        self.victim = bot
+        self.objects.append(self.victim)
+
 
 if __name__ == "__main__":
+    # Init the Simulation instance
     simu = Simulation(is_static=True)
+
+    # ----------------------------- Create the level ----------------------------- #
+
+    # Add obstacles
+    simu.objects += [ Wall(pos, config.WALL_WIDTH, config.WALL_HEIGHT) for pos in config.WALLS_COORD ]
+
+    # Init AI objects
+    simu.set_AIs([ AIObject(pos, config.AI_START_ALPHA, is_static=True) for pos in config.AI_START_POS ])
+
+    # Init the bot (victim/player)
+    simu.set_bot(BotObject(config.BOT_START_POS, config.BOT_START_ALPHA, is_static=True))
+
+    # Start the Simulation and stop it after all
     simu.run_UI()
     simu.force_quit()
